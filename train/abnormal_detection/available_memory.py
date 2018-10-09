@@ -18,7 +18,7 @@ column = "FREE_MEM_SIZE"
 
 def train_model():
     # prepare data
-    data = Data("../../datasets/db_os_stat(180123-180128).csv", "FREE_MEM_SIZE", timesteps=timesteps)
+    data = Data(filename=filename, column=column, timesteps=timesteps)
     # init placeholder
     x, y, keep_prob = utils.lstm_model.initPlaceholder(timesteps)
     predictions = utils.lstm_model.lstm_model(x,
