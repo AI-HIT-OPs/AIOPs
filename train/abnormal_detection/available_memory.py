@@ -7,12 +7,13 @@ import matplotlib.pyplot as plt
 # settings of lstm model
 timesteps = 20
 batch_size = 64
-epochs = 100
+epochs = 10
 
 lstm_size = 30
 lstm_layers = 2
 
 filename = "../../datasets/db_os_stat(180123-180128).csv"
+model = "../../model/abnormal_detection_model/available_memory_model/FREE_MEM_SIZE_MODEL"
 column = "FREE_MEM_SIZE"
 
 
@@ -29,6 +30,8 @@ def train_model():
     cost = tf.losses.mean_squared_error(y, predictions)
     # optimizer
     optimizer = tf.train.AdamOptimizer(learning_rate=0.001).minimize(cost)
+    tf.add_to_collection("predictions", predictions)
+    saver = tf.train.Saver()
 
     # define session
     gpu_options = tf.GPUOptions(allow_growth=True)
@@ -47,6 +50,8 @@ def train_model():
                           'Iteration:{}'.format(iteration),
                           'Train loss: {}'.format(loss))
                 iteration += 1
+        # save model as checkpoint format to optional folder
+        saver.save(sess, model)
         # test model
         feed_dict = {x: data.test_x[:, :, None], keep_prob: 1.0}
         results = sess.run(predictions, feed_dict=feed_dict)
@@ -58,6 +63,3 @@ def train_model():
 
 if __name__ == "__main__":
     train_model()
-
-
-
