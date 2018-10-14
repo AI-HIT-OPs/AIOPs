@@ -52,3 +52,9 @@ class Data(object):
             begin_i = i
             end_i = i + batch_size if (i + batch_size) < len(x) else len(x)
             yield x[begin_i:end_i], y[begin_i:end_i]
+
+    def getFakeData(self, x, batch_size=1):
+        begin_i = 0
+        end_i = batch_size if batch_size < len(x) else len(x)
+        return x[begin_i:end_i]
+
