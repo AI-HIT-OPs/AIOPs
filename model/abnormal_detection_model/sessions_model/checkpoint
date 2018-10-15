@@ -1,0 +1,2 @@
+model_checkpoint_path: "TOTAL_SESSIONS_MODEL"
+all_model_checkpoint_paths: "TOTAL_SESSIONS_MODEL"
