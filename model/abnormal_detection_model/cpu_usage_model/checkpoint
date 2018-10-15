@@ -1,0 +1,2 @@
+model_checkpoint_path: "USER_CPU_MODEL"
+all_model_checkpoint_paths: "USER_CPU_MODEL"
