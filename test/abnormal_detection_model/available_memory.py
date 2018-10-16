@@ -34,7 +34,7 @@ def test_model():
         feed_dict = {x: test_data[:, :, None], keep_prob: 1.0}
         results = sess.run(predictions, feed_dict=feed_dict)
 
-        plt.plot(timesteps + 1, results[0], '.', label='predicted')
+        plt.plot(timesteps, results[0], '.', label='predicted')
         plt.plot([i for i in range(timesteps)], test_data[0], 'g--', label='real')
         plt.legend()
         plt.show()

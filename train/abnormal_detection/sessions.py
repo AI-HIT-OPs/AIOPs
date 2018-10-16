@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 # settings of lstm model
 timesteps = 20
 batch_size = 64
-epochs = 100
+epochs = 32
 
 lstm_size = 30
 lstm_layers = 2
