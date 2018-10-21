@@ -1,76 +1,29 @@
 import tensorflow as tf
 from utils.preprocessing import Data
+from timed_tasks.predict import Predict
 
-# settings
-timesteps = 20
-batch_size = 64
+import sys
+import time
+from datetime import datetime
+from apscheduler.schedulers.background import BackgroundScheduler
 
-filename_available_memory = "../../datasets/db_os_stat(180123-180128).csv"
-filename_consistent_gets = "../../datasets/db_stat(180123-180128).csv"
-filename_cpu_usage = ""
-model = "../../model/abnormal_detection_model/available_memory_model/FREE_MEM_SIZE_MODEL"
-model1 = "../../model/abnormal_detection_model/consistent_gets_model/CONSISTENT_GETS_MODEL"
-column1 = "CONSISTENT_GETS"
-column = "FREE_MEM_SIZE"
+# sys.path.append("") cmd need system path added
 
 
-g1 = tf.Graph() # 加载到Session 1的graph
-g2 = tf.Graph() # 加载到Session 2的graph
+def tick():
+    print('Tick! The time is: %s' % datetime.now())
 
-sess1 = tf.Session(graph=g1) # Session1
-sess2 = tf.Session(graph=g2) # Session2
+def tick1():
+    print('Tick! The time1 is: %s' % datetime.now())
 
-# 加载第一个模型
-with sess1.as_default():
-    with g1.as_default():
-        tf.global_variables_initializer().run()
-        # initial saver from meta data graph
-        saver = tf.train.import_meta_graph(model + ".meta")
-        # restore session
-        saver.restore(sess1, model)
+if __name__ == '__main__':
+    scheduler = BackgroundScheduler()
+    scheduler.add_job(tick, 'interval', seconds=3)
+    scheduler.add_job(tick1, 'interval', seconds=3)
+    scheduler.start()
 
-# 加载第二个模型
-with sess2.as_default():  # 1
-    with g2.as_default():
-        tf.global_variables_initializer().run()
-        # initial saver from meta data graph
-        saver = tf.train.import_meta_graph(model1 + ".meta")
-        # restore session
-        saver.restore(sess2, model1)
-
-
-def test1():
-    with sess1.as_default():
-        with sess1.graph.as_default():
-            # get predict position by collection
-            predictions = tf.get_collection('predictions')[0]
-
-            # get input frame placeholder by operation name
-            x = g1.get_operation_by_name('input_x').outputs[0]
-            keep_prob = g1.get_operation_by_name('keep_prob').outputs[0]
-
-            data = Data(filename=filename, column=column, timesteps=timesteps)
-            test_data = data.getFakeData(data.train_x, batch_size=1)
-            feed_dict = {x: test_data[:, :, None], keep_prob: 1.0}
-            results = sess1.run(predictions, feed_dict=feed_dict)
-            print(results)
-
-
-def test2():
-    with sess2.as_default():
-        with sess2.graph.as_default():
-            # get predict position by collection
-            predictions = tf.get_collection('predictions')[0]
-
-            # get input frame placeholder by operation name
-            x = g2.get_operation_by_name('input_x').outputs[0]
-            keep_prob = g2.get_operation_by_name('keep_prob').outputs[0]
-
-            data = Data(filename=filename1, column=column1, timesteps=timesteps)
-            test_data = data.getFakeData(data.train_x, batch_size=1)
-            feed_dict = {x: test_data[:, :, None], keep_prob: 1.0}
-            results = sess2.run(predictions, feed_dict=feed_dict)
-            print(results)
-
-test1()
-test2()
+    try:
+        while True:
+            time.sleep(2)
+    except (KeyboardInterrupt, SystemExit):
+        scheduler.shutdown()

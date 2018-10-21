@@ -31,14 +31,14 @@ if __name__ == "__main__":
     timesteps = 20
     batch_size = 64
 
-    filename = "../../datasets/db_os_stat(180123-180128).csv"
-    filename1 = "../../datasets/db_stat(180123-180128).csv"
-    model = "../../model/abnormal_detection_model/available_memory_model/FREE_MEM_SIZE_MODEL"
-    model1 = "../../model/abnormal_detection_model/consistent_gets_model/CONSISTENT_GETS_MODEL"
-    column1 = "CONSISTENT_GETS"
-    column = "FREE_MEM_SIZE"
+    filename_available_memory = "../../datasets/db_os_stat(180123-180128).csv"
+    filename_consistent_gets = "../../datasets/db_stat(180123-180128).csv"
+    model_available_memory = "../../model/abnormal_detection_model/available_memory_model/FREE_MEM_SIZE_MODEL"
+    model_consistent_gets = "../../model/abnormal_detection_model/consistent_gets_model/CONSISTENT_GETS_MODEL"
+    column_available_memory = "FREE_MEM_SIZE"
+    column_consistent_gets = "CONSISTENT_GETS"
     # multi model test
-    predict1 = Predict(model)
-    predict1.predict(filename, column, timesteps)
-    predict2 = Predict(model1)
-    predict2.predict(filename1, column1, timesteps)
+    predict1 = Predict(model_available_memory)
+    predict1.predict(filename_available_memory, column_available_memory, timesteps)
+    predict2 = Predict(model_consistent_gets)
+    predict2.predict(filename_consistent_gets, column_consistent_gets, timesteps)
