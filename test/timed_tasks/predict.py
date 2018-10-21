@@ -13,29 +13,34 @@ column = "FREE_MEM_SIZE"
 
 class Predict:
     def __init__(self, model, filename, column, timesteps):
-        self.graph=tf.Graph()#为每个类(实例)单独创建一个graph
+        self.filename = filename
+        self.column = column
+        self.timesteps = timesteps
+        self.graph = tf.Graph()#为每个类(实例)单独创建一个graph
         with self.graph.as_default():
-            self.saver=tf.train.import_meta_graph(model + ".meta")#创建恢复器
-             #注意！恢复器必须要在新创建的图里面生成,否则会出错。
-        self.sess=tf.Session(graph=self.graph)#创建新的sess
+            self.saver = tf.train.import_meta_graph(model + ".meta")
+        self.sess = tf.Session(graph=self.graph)
         with self.sess.as_default():
             with self.graph.as_default():
                 self.saver.restore(self.sess, model)
-                predictions = tf.get_collection('predictions')[0]
+                self.predictions = tf.get_collection('predictions')[0]
 
-                graph = tf.get_default_graph()
+                self.graph = tf.get_default_graph()
                 # get input frame placeholder by operation name
-                x = graph.get_operation_by_name('input_x').outputs[0]
-                keep_prob = graph.get_operation_by_name('keep_prob').outputs[0]
+                self.x = self.graph.get_operation_by_name('input_x').outputs[0]
+                self.keep_prob = self.graph.get_operation_by_name('keep_prob').outputs[0]
 
-                data = Data(filename=filename, column=column, timesteps=timesteps)
-                test_data = data.getFakeData(data.train_x, batch_size=1)
-                feed_dict = {x: test_data[:, :, None], keep_prob: 1.0}
-                results = self.sess.run(predictions, feed_dict=feed_dict)
-                print(results)
+    def test(self):
+        data = Data(filename=self.filename, column=self.column, timesteps=self.timesteps)
+        test_data = data.getFakeData(data.train_x, batch_size=1)
+        feed_dict = {self.x: test_data[:, :, None], self.keep_prob: 1.0}
+        results = self.sess.run(self.predictions, feed_dict=feed_dict)
+        print(results)
 
 
 
 if __name__ == "__main__":
-    predict = Predict(model, filename, column, timesteps)
-    predict = Predict(model1, filename1, column1, timesteps)
+    predict1 = Predict(model, filename, column, timesteps)
+    predict1.test()
+    predict2 = Predict(model1, filename1, column1, timesteps)
+    predict2.test()
