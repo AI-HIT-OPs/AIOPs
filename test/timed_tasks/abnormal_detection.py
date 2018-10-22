@@ -32,6 +32,11 @@ def predict_task():
                                     column=column_consistent_gets,
                                     timesteps=timesteps)
 
+'''
+def predict_task2():
+    .....
+'''
+
 if __name__ == '__main__':
     scheduler = BackgroundScheduler()
     scheduler.add_job(predict_task, 'interval', seconds=5)
