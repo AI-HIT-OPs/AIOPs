@@ -57,6 +57,7 @@ predict_session_logical_reads = Predict(model_session_logical_reads)
 predict_sessions = Predict(model_sessions)
 predict_user_calls = Predict(model_user_calls)
 
+
 def predict_task():
     print(time.strftime('start time: ' + '%Y-%m-%d %H:%M:%S', time.localtime(time.time())))
     # predict tasks

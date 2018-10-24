@@ -4,11 +4,13 @@ from utils.preprocessing import Data
 
 class Predict:
     def __init__(self, model):
+        # set GPU memory limitation
+        gpu_options = tf.GPUOptions(allow_growth=True)
         # initial session
         self.graph = tf.Graph()
         with self.graph.as_default():
             self.saver = tf.train.import_meta_graph(model + ".meta")
-        self.sess = tf.Session(graph=self.graph)
+        self.sess = tf.Session(graph=self.graph, config=tf.ConfigProto(gpu_options=gpu_options))
         with self.sess.as_default():
             with self.graph.as_default():
                 self.saver.restore(self.sess, model)
