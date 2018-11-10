@@ -1,9 +1,10 @@
 import sys
 import time
-from timed_tasks.predict import Predict
-from apscheduler.schedulers.background import BackgroundScheduler
 
-# sys.path.append("") cmd need system path added
+sys.path.append("predict.py")
+print(sys.path)
+from apscheduler.schedulers.background import BackgroundScheduler
+from predict import Predict
 
 
 # all settings
