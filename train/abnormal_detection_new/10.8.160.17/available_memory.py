@@ -1,7 +1,6 @@
-from utils.preprocessing import NewData
-import utils.lstm_model
-
 import tensorflow as tf
+import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
 
 # settings of lstm model
@@ -19,15 +18,94 @@ start = 1
 end = 17280
 
 
+class NewData(object):
+    def __init__(self, filename, column, timesteps, start, end):
+        self.timesteps = timesteps
+        self.filename = filename
+        self.column = column
+        self.start = start
+        self.end = end
+        self.train_x, self.train_y, self.test_x, self.test_y = self.preprocess()
+
+    def MaxMinNormalization(self, x, max_value, min_value):
+        """
+        :param x:           data
+        :param max_value:   max value in the data
+        :param min_value:   min value in the data
+        :return:            normalization data
+        """
+        x = (x - min_value) / (max_value - min_value)
+        return x
+
+    def generateGroupDataList(self, seq):
+        """
+        :param seq:         continuous sequence of value in data
+        :return:            input data array and label data array in the format of numpy
+        """
+        x = []
+        y = []
+        for i in range(len(seq) - self.timesteps):
+            x.append(seq[i: i + self.timesteps])
+            y.append(seq[i + self.timesteps])
+        return np.array(x, dtype=np.float32), np.array(y, dtype=np.float32)
+
+    def preprocess(self):
+        """
+        :return:            training data and testing data of given filename and column
+        """
+        data = pd.read_csv(self.filename)
+        data = data["VALUE"].values.tolist()
+        data = data[self.start - 1:self.end]
+
+        data = self.MaxMinNormalization(data,
+                                        np.max(data, axis=0),
+                                        np.min(data, axis=0))
+
+        train_x, train_y = self.generateGroupDataList(data)
+        test_x, test_y = self.generateGroupDataList(data)
+
+        return train_x, train_y, test_x, test_y
+
+    def getBatches(self, x, y, batch_size):
+        for i in range(0, len(x), batch_size):
+            begin_i = i
+            end_i = i + batch_size if (i + batch_size) < len(x) else len(x)
+            yield x[begin_i:end_i], y[begin_i:end_i]
+
+
+def initPlaceholder(timesteps):
+    x = tf.placeholder(tf.float32, [None, timesteps, 1], name='input_x')
+    y_ = tf.placeholder(tf.float32, [None, 1], name='input_y')
+    keep_prob = tf.placeholder(tf.float32, name='keep_prob')
+    return x, y_, keep_prob
+
+
+def lstm_model(x, lstm_size, lstm_layers, keep_prob):
+    # define basis structure LSTM cell
+    def lstm_cell():
+        lstm = tf.contrib.rnn.BasicLSTMCell(lstm_size)
+        drop = tf.contrib.rnn.DropoutWrapper(lstm, output_keep_prob=keep_prob)
+        return drop
+    # multi layer LSTM cell
+    cell = tf.contrib.rnn.MultiRNNCell([lstm_cell() for _ in range(lstm_layers)])
+    # dynamic rnn
+    outputs, final_state = tf.nn.dynamic_rnn(cell, x, dtype=tf.float32)
+    # reverse
+    outputs = outputs[:, -1]
+    # fully connected
+    predictions = tf.contrib.layers.fully_connected(outputs, 1, activation_fn=tf.sigmoid)
+    return predictions
+
+
 def train_model():
     # prepare data
     data = NewData(filename=filename, column=column, timesteps=timesteps, start=start, end=end)
     # init placeholder
-    x, y, keep_prob = utils.lstm_model.initPlaceholder(timesteps)
-    predictions = utils.lstm_model.lstm_model(x,
-                                              lstm_size=lstm_size,
-                                              lstm_layers=lstm_layers,
-                                              keep_prob=keep_prob)
+    x, y, keep_prob = initPlaceholder(timesteps)
+    predictions = lstm_model(x,
+                             lstm_size=lstm_size,
+                             lstm_layers=lstm_layers,
+                             keep_prob=keep_prob)
     # mse loss function
     cost = tf.losses.mean_squared_error(y, predictions)
     # optimizer
