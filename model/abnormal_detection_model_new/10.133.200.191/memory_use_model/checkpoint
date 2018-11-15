@@ -1,0 +1,2 @@
+model_checkpoint_path: "MEMORY_USE_MODEL"
+all_model_checkpoint_paths: "MEMORY_USE_MODEL"

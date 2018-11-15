@@ -1,0 +1,2 @@
+model_checkpoint_path: "SGA_SHARED_POOL_MODEL"
+all_model_checkpoint_paths: "SGA_SHARED_POOL_MODEL"

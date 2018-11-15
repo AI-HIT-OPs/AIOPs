@@ -1,0 +1,2 @@
+model_checkpoint_path: "CPU_USER_TIME_MODEL"
+all_model_checkpoint_paths: "CPU_USER_TIME_MODEL"

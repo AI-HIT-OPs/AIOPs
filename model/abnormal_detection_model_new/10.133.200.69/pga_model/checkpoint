@@ -1,0 +1,2 @@
+model_checkpoint_path: "PGA_MODEL"
+all_model_checkpoint_paths: "PGA_MODEL"

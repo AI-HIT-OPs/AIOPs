@@ -1,0 +1,2 @@
+model_checkpoint_path: "CONSISTENT_GETS_MODEL"
+all_model_checkpoint_paths: "CONSISTENT_GETS_MODEL"

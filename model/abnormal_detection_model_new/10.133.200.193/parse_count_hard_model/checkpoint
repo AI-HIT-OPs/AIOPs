@@ -1,0 +1,2 @@
+model_checkpoint_path: "PARSE_COUNT_HARD_MODEL"
+all_model_checkpoint_paths: "PARSE_COUNT_HARD_MODEL"

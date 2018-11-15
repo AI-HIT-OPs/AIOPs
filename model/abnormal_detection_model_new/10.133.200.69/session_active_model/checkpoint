@@ -1,0 +1,2 @@
+model_checkpoint_path: "SESSION_ACTIVE_MODEL"
+all_model_checkpoint_paths: "SESSION_ACTIVE_MODEL"

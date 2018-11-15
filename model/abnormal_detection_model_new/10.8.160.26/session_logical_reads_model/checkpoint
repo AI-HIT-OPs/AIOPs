@@ -1,0 +1,2 @@
+model_checkpoint_path: "SESSION_LOGICAL_READS_MODEL"
+all_model_checkpoint_paths: "SESSION_LOGICAL_READS_MODEL"
