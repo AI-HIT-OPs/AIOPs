@@ -1,0 +1,44 @@
+select ah.host,
+       hu.itemid,
+       i.name,
+       (to_date('19700101', 'yyyymmdd') + hu.clock / 86400 +
+       to_number(substr(tz_offset(sessiontimezone), 1, 3)) / 24) as "Time",
+       hu.value
+  from (select its.itemid, its.hostid, h.host
+          from items its, hosts h
+         where its.hostid = h.hostid
+           and its.name = 'CPU idle time'
+           and h.host = '10.8.160.24_yzdxdb1') ah,
+       items i,
+       history_uint hu
+ where i.itemid = hu.itemid
+   and i.itemid = ah.itemid
+   and i.value_type = 3
+   and hu.clock between
+       ((to_date('2018-11-11 10:00:00', 'yyyy-mm-dd hh24:mi:ss') - to_date('1970-01-01 00:00:00', 'yyyy-mm-dd hh24:mi:ss')) *
+       86400 - to_number(substr(tz_offset(sessiontimezone), 1, 3)) * 3600) and
+       ((to_date('2018-11-11 10:10:00', 'yyyy-mm-dd hh24:mi:ss') - to_date('1970-01-01 00:00:00', 'yyyy-mm-dd hh24:mi:ss')) *
+       86400 - to_number(substr(tz_offset(sessiontimezone), 1, 3)) * 3600)
+union all
+select ah.host,
+       h.itemid,
+       i.name,
+       (to_date('19700101', 'yyyymmdd') + h.clock / 86400 +
+       to_number(substr(tz_offset(sessiontimezone), 1, 3)) / 24) as "Time",
+       h.value
+  from (select its.itemid, its.hostid, h.host
+          from items its, hosts h
+         where its.hostid = h.hostid
+           and its.name = 'CPU idle time'
+           and h.host = '10.8.160.24_yzdxdb1') ah,
+       items i,
+       history h
+ where i.itemid = h.itemid
+   and i.itemid = ah.itemid
+   and i.value_type = 0
+   and h.clock between
+       ((to_date('2018-11-11 10:00:00', 'yyyy-mm-dd hh24:mi:ss') - to_date('1970-01-01 00:00:00', 'yyyy-mm-dd hh24:mi:ss')) *
+       86400 - to_number(substr(tz_offset(sessiontimezone), 1, 3)) * 3600) and
+       ((to_date('2018-11-11 10:10:00', 'yyyy-mm-dd hh24:mi:ss') - to_date('1970-01-01 00:00:00', 'yyyy-mm-dd hh24:mi:ss')) *
+       86400 - to_number(substr(tz_offset(sessiontimezone), 1, 3)) * 3600)
+ order by 1, 3, 4

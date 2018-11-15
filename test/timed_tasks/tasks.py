@@ -1,8 +1,7 @@
 import sys
 import time
 
-sys.path.append("predict.py")
-print(sys.path)
+
 from apscheduler.schedulers.background import BackgroundScheduler
 from predict import Predict
 

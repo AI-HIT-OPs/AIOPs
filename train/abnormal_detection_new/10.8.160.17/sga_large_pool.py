@@ -6,13 +6,13 @@ import matplotlib.pyplot as plt
 # settings of lstm model
 timesteps = 20
 batch_size = 64
-epochs = 50
+epochs = 5
 
 lstm_size = 30
 lstm_layers = 2
 
 filename = "../../../datasets/1-10.8.160.17_20181027_20181109.csv"
-model = "../../../model/abnormal_detection_model_new/10.8.160.17/sga_java_pool_model/SGA_JAVA_POOL_MODEL"
+model = "../../../model/abnormal_detection_model_new/10.8.160.17/sga_large_pool_model/SGA_LARGE_POOL_MODEL"
 column = "SGA_LARGE_POOL"
 start = 172769
 end = 190040
